@@ -1,6 +1,5 @@
 Vagrant.configure(2) do |config|
-  config.vm.box = "ubuntu/trusty64"
-  config.vm.network "private_network", ip:"169.254.57.183"
+  config.vm.box = "debian/stretch64"
   config.vm.network "forwarded_port", guest:80, host:8080, auto_correct: true
   config.vm.synced_folder ".", "/var/www/html"
  config.vm.provider "virtualbox" do |vb|
@@ -8,20 +7,15 @@ Vagrant.configure(2) do |config|
  end
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
-    sudo apt-get install apache2 -y
-    sudo apt-get install ufw -y
-    sudo ufw allow from 10.0.2.2 to any port 22
-    sudo ufw allow 80/tcp
-    sudo ufw --force enable
-    sudo apt-get install libapache2-mod-proxy-html -y
-    sudo apt-get install libxml2-dev -y
-    a2enmod proxy
-    a2enmod proxy_html
-    a2enmod proxy_http
-    sed -i '$aServerName localhost' /etc/apache2/apache2.conf
-    service apache2 restart
-    cd /etc/apache2/sites-enabled
-    wget https://pastebin.com/raw/GbjFC2ii
-    cp GbjFC2ii 001-reverseproxy.conf
+    sudo apt-get install apache2 php5 libapache2-mod-php5 -y
+    sudo apt-get install mysql-server mysql-client php5-mysql -y
+    sudo apt-get install phpmyadmin -y
+    apt-get install openjdk-8-jre-headless -y
+    apt-get install screen -y
+    adduser minecraft
+    mkdir minecraft
+    cd minecraft
+    wget https://yivesmirror.com/files/spigot/spigot-latest.jar
+    screen -AmdS minecraft java -jar /home/minecraft/spigot-latest.jar
   SHELL
 end
